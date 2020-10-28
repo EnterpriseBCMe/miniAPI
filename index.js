@@ -1,21 +1,21 @@
 const http = require("http");
 const app = http.createServer();
-const fs= require("fs");
+const fs = require("fs");
 const formidable = require("formidable");
 const path = require("path");
 
 //mysql连接
-const mysql      = require('mysql');
+const mysql = require('mysql');
 const url = require("url");
 const connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'syh',
-    password : '114514',
-    database : 'test'
+    host: 'localhost',
+    user: 'syh',
+    password: '114514',
+    database: 'test'
 });
 connection.connect();
 const addVideo = 'INSERT INTO videoInfo(sid,user_name,image_path,video_path) VALUES(?,?,?,?)';
-
+//test
 //存储路径定义
 const targetDir = path.join(__dirname, 'upload');
 const picDir = "pictures";
@@ -26,14 +26,14 @@ const form = new formidable.IncomingForm();
 form.keepExtensions = true;
 form.multiples = true;
 form.uploadDir = targetDir;
-form.encoding='UTF-8';
-app.on("request",(req,res)=>{
+form.encoding = 'UTF-8';
+app.on("request", (req, res) => {
 
     console.log("received request");
-    if(req.method==="POST"){
+    if (req.method === "POST") {
         console.log("received post");
-        form.parse(req,function(err,fields,files){
-            if(err)
+        form.parse(req, function(err, fields, files) {
+            if (err)
                 throw err;
             var filesUrl = [];
             const picPath = files["picture"].path;
@@ -61,15 +61,15 @@ app.on("request",(req,res)=>{
 
 
 
-            connection.query(addVideo,addVideoPram,function (err, result) {
-                if(err){
-                    console.log('[INSERT ERROR] - ',err.message);
+            connection.query(addVideo, addVideoPram, function(err, result) {
+                if (err) {
+                    console.log('[INSERT ERROR] - ', err.message);
                     return;
                 }
 
                 console.log('--------------------------INSERT----------------------------');
                 //console.log('INSERT ID:',result.insertId);
-                console.log('INSERT ID:',result);
+                console.log('INSERT ID:', result);
                 console.log('-----------------------------------------------------------------\n\n');
             });
             // 返回上传信息
@@ -77,14 +77,13 @@ app.on("request",(req,res)=>{
             //console.log(JSON.stringify(filesUrl));
             res.end(JSON.stringify(filesUrl));
         })
-    }
-    else {
+    } else {
         const urlObj = url.parse(req.url, true);
         const query = urlObj.query;
         console.log("received get");
         res.end(JSON.stringify(query));
     }
 })
-app.listen(3000,()=>{
+app.listen(3000, () => {
     console.log("start listen");
 })
